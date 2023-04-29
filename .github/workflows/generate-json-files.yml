@@ -1,0 +1,46 @@
+name: Generate JSON files
+
+on:
+  push:
+  schedule:
+    - cron: "0 0 1 * *"
+
+jobs:
+  build:
+    name: Generate JSON files
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.11]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements.txt
+
+    - name: Generate JSON files
+      run: |
+        python ./generate.py
+
+    - uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        # Optional but recommended
+        # Defaults to "Apply automatic changes"
+        commit_message: Apply automatic changes
+
+        file_pattern: ./data/*.json
+
+        # Optional local file path to the repository
+        # Defaults to the root of the repository
+        repository: .
+
+        # Optional: Skip internal call to `git fetch`
+        skip_fetch: true
