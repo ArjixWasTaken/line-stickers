@@ -107,7 +107,6 @@ for _, category_id in creator_categories.items():
     count += 1
     print(f"Getting creator stickers packs (category {count}/{n})")
     creator_sticker_packs.extend(get_sticker_packs(category_id, "top_creators"))
-    break
 
 with open("creator_sticker_packs.json", "w") as f:
     json.dump(creator_sticker_packs, f)
