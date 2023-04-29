@@ -1,7 +1,6 @@
 name: Generate JSON files
 
 on:
-  push:
   schedule:
     - cron: "0 0 1 * *"
 
