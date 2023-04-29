@@ -85,28 +85,36 @@ if not os.path.exists("data"):
 
 os.chdir("data")
 
-official_sticker_packs = []
+official_sticker_packs = {}
 
 count = 0
 n = len(official_categories.keys())
 
-for _, category_id in official_categories.items():
+for name, category_id in official_categories.items():
     count += 1
-    print(f"Getting official sticker packs (category {count}/{n})")
-    official_sticker_packs.extend(get_sticker_packs(category_id, "top"))
+    print(f"Getting official sticker packs ({str(count).zfill(2)}/{n}) - {name}")
+    official_sticker_packs[category_id] = {
+        "title": name,
+        "id": category_id,
+        "packs": get_sticker_packs(category_id, "top"),
+    }
 
 with open("official_sticker_packs.json", "w") as f:
     json.dump(official_sticker_packs, f)
 
-creator_sticker_packs = []
+creator_sticker_packs = {}
 
 count = 0
 n = len(creator_categories.keys())
 
-for _, category_id in creator_categories.items():
+for name, category_id in creator_categories.items():
     count += 1
-    print(f"Getting creator stickers packs (category {count}/{n})")
-    creator_sticker_packs.extend(get_sticker_packs(category_id, "top_creators"))
+    print(f"Getting creator stickers packs ({str(count).zfill(2)}/{n}) - {name}")
+    creator_sticker_packs[category_id] = {
+        "title": name,
+        "id": category_id,
+        "packs": get_sticker_packs(category_id, "top_creators"),
+    }
 
 with open("creator_sticker_packs.json", "w") as f:
     json.dump(creator_sticker_packs, f)
