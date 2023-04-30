@@ -1,3 +1,4 @@
+from pprint import pprint
 from typing import Literal, TypedDict
 from bs4 import BeautifulSoup
 from session import SessionWithUrlBase
@@ -12,7 +13,7 @@ session = requests.Session("https://store.line.me")
 soup = BeautifulSoup(session.get("/stickershop/home/general/en").text, "html.parser")
 official_categories: dict[str, int] = dict(
     [
-        [x.text.strip(), int(x["href"].split("=")[1])]
+        [x.text.strip(), x["href"].split("?")[1]]
         for x in soup.select('[href*="?category="]')
     ]
 )
@@ -20,7 +21,7 @@ official_categories: dict[str, int] = dict(
 soup = BeautifulSoup(session.get("/stickershop/home/user/en").text, "html.parser")
 creator_categories: dict[str, int] = dict(
     [
-        [x.text.strip(), int(x["href"].split("=")[1])]
+        [x.text.strip(), x["href"].split("?")[1]]
         for x in soup.select('[href*="top_creators"][href*="?"]')
     ]
 )
@@ -32,7 +33,7 @@ class StickerPack(TypedDict):
 
 
 def get_sticker_packs(
-    category_id: int, kind: Literal["top", "top_creators"] = "top"
+    category_param: str, kind: Literal["top", "top_creators"] = "top"
 ) -> list[StickerPack]:
     next_page = "1"
     sticker_packs = []
@@ -40,8 +41,7 @@ def get_sticker_packs(
     while 1:
         soup = BeautifulSoup(
             session.get(
-                f"/stickershop/showcase/{kind}/en",
-                params={"category": category_id, "page": next_page},
+                f"/stickershop/showcase/{kind}/en?{category_param}&page={next_page}"
             ).text,
             "html.parser",
         )
@@ -85,20 +85,21 @@ if not os.path.exists("data"):
 
 os.chdir("data")
 
+
 # Official stickers
 official_sticker_packs = []
 
 count = 0
 n = len(official_categories.keys())
 
-for name, category_id in official_categories.items():
+for name, param in official_categories.items():
     count += 1
     print(f"Getting official sticker packs ({str(count).zfill(2)}/{n}) - {name}")
     official_sticker_packs.append(
         {
             "title": name,
-            "id": category_id,
-            "packs": get_sticker_packs(category_id, "top"),
+            "param": param,
+            "packs": get_sticker_packs(param, "top"),
         }
     )
 
@@ -112,14 +113,14 @@ creator_sticker_packs = []
 count = 0
 n = len(creator_categories.keys())
 
-for name, category_id in creator_categories.items():
+for name, param in creator_categories.items():
     count += 1
     print(f"Getting creator stickers packs ({str(count).zfill(2)}/{n}) - {name}")
     creator_sticker_packs.append(
         {
             "title": name,
-            "id": category_id,
-            "packs": get_sticker_packs(category_id, "top_creators"),
+            "param": param,
+            "packs": get_sticker_packs(param, "top_creators"),
         }
     )
 
