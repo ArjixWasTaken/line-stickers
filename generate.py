@@ -104,7 +104,7 @@ for name, param in official_categories.items():
     )
 
 with open("official_sticker_packs.json", "w") as f:
-    json.dump(official_sticker_packs, f)
+    json.dump(official_sticker_packs, f, indent=3)
 
 
 # Creator stickers
@@ -125,4 +125,4 @@ for name, param in creator_categories.items():
     )
 
 with open("creator_sticker_packs.json", "w") as f:
-    json.dump(creator_sticker_packs, f)
+    json.dump(creator_sticker_packs, f, indent=3)
