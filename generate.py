@@ -103,6 +103,9 @@ for name, param in official_categories.items():
         }
     )
 
+for category in official_sticker_packs:
+    category["packs"].sort(key=lambda x: x["id"])
+
 with open("official_sticker_packs.json", "w") as f:
     json.dump(official_sticker_packs, f, indent=3)
 
@@ -123,6 +126,9 @@ for name, param in creator_categories.items():
             "packs": get_sticker_packs(param, "top_creators"),
         }
     )
+
+for category in creator_sticker_packs:
+    category["packs"].sort(key=lambda x: x["id"])
 
 with open("creator_sticker_packs.json", "w") as f:
     json.dump(creator_sticker_packs, f, indent=3)
